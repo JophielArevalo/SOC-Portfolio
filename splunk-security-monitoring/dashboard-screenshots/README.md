@@ -45,28 +45,7 @@ Highlights the top‑requested product file, excluding non‑product static asse
 
 ---
 
-## 🧩 How These Screenshots Fit Into the Investigation
-
-These visualisations help SOC analysts:
-
-- Detect anomalies **at a glance**  
-- Correlate SPL results with time‑based trends  
-- Identify patterns that may not appear in raw logs  
-- Support decision‑making during an incident  
-- Provide evidence for reports, incident notes, and post‑incident reviews  
-
 All visualisations are built from the SPL queries included in  
 `splunk-queries.txt`.
 
----
 
-## 📁 Files in This Folder
-
-- `screenshot1.png`, `screenshot2.png`, etc.  
-  Dashboard panels demonstrating findings
-- `README.md`  
-  (This file)
-
----
-
-If you need me to create **captions** for each screenshot or structure the images into a **GitHub gallery**, just tell me!
