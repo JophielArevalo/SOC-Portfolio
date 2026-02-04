@@ -4,7 +4,7 @@ This investigation reconstructs activity across **four evidence sources**—a Wi
 
 ---
 
-## 🎯 Objectives
+## Objectives
 - Preserve evidence integrity (hashing, chain of custody).
 - Mount and analyze disk partitions; parse registry hives; recover deleted files.
 - Reconstruct conversations and transfers from PCAP (Wireshark).
@@ -14,16 +14,15 @@ This investigation reconstructs activity across **four evidence sources**—a Wi
 
 ---
 
-## 📁 Folder Contents
+## Folder Contents
 - **report.pdf** — Full, annotated investigation report with screenshots and references.
 - **evidence-workflow.md** — Acquisition, verification, mounting, and toolchain steps.
-- **screenshots/** — Selected figures (hex carving, Volatility outputs, PCAP streams).
-- **timeline.csv** — Normalized timeline (UTC) across all evidence.
+- **timeline.jpg** — Normalized timeline (UTC) across all evidence.
 - **summary.md** — (This file) Executive overview for recruiters.
 
 ---
 
-## 🧩 Key Techniques
+## Key Techniques
 - **Disk forensics (Windows):** `img_stat`, `mmls`, mount by offset, Recycle Bin parsing, ZIP cracking, registry parsing (RegRipper), file carving via hex signatures.
 - **Network forensics (PCAP):** Stream reconstruction (TCP), conversation stats, credential and artifact discovery.
 - **Memory forensics:** Profile detection, `pslist`, `netscan`, `memdump`, `lsadump`.
@@ -32,7 +31,7 @@ This investigation reconstructs activity across **four evidence sources**—a Wi
 
 ---
 
-## 🛡️ Integrity & Legal Considerations
+## Integrity & Legal Considerations
 - Evidence hashed on acquisition (e.g., `md5sum`) and re-verified post‑processing.
 - Read‑only mounts; changes recorded in **evidence-workflow.md**.
 - Chain‑of‑custody captured for each handling step.
