@@ -1,0 +1,226 @@
+==========================
+Splunk Queries + Explanations
+Project: Splunk Security Monitoring (Hungry Hustle)
+Author: Jophiel Arevalo Enriquez
+==========================
+
+Notes
+-----
+- All examples assume: index = "hungryhustle".
+- Web logs use sourcetype = access_combined ; email logs use sourcetype = smtp_custom.
+- Replace IPs/fields where your lab data differs.
+
+------------------------------------------------------------
+1) Top IPs attempting unauthorised access
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined file=unauthorised
+| top clientip showperc=f
+
+Use:
+Returns the most frequent offending client IPs that generated unauthorised requests
+against the application. Use this to identify brute force sources or misbehaving bots.
+
+
+------------------------------------------------------------
+1b) Detailed unauthorised attempts (contextual view)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined file=unauthorised
+| stats count by clientip useragent status
+| sort - count
+
+Use:
+Adds user-agent and HTTP status context to each source IP, helping you spot
+automated tools, shared infrastructure, or specific clients.
+
+
+------------------------------------------------------------
+2) Countries with successful visits (HTTP 200)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" status=200
+| iplocation clientip
+| stats count by Country
+| sort limit=10 - count
+| rename Country AS "Countries that visited the website" count AS "Attempts"
+
+Use:
+Geolocates legitimate traffic to show your top visitor countries; useful for
+marketing handoffs and anomaly baselining.
+
+
+------------------------------------------------------------
+3) Countries behind unauthorised attempts
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined file=unauthorised
+| iplocation clientip
+| stats count by Country
+| sort - count
+
+Use:
+Same as (2) but focused on blocked/unauthorised interactions; use for geo-based
+mitigation or threat‑intel enrichment.
+
+
+------------------------------------------------------------
+4) Insider data leak triage (Sam’s workstation → rare senders)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=smtp_custom (192.168.1.25 OR 192-168-1-25)
+| rare limit=5 Return_path showperc=f
+| where count < 1000
+
+Use:
+Focuses on the workstation in question, surfaces unusual SMTP “Return_path”
+senders with very low volume — a common signature of exfil or test drops.
+(Adjust the IP string format as your logs require.)
+
+
+------------------------------------------------------------
+5) Rare sender/file pairs (HR complaint evidence)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=smtp_custom
+| rare limit=5 Return_path, filename showperc=f
+
+Use:
+Correlates low-frequency senders with attachment/file names (e.g., payslips).
+Good for misuse or harassment investigations.
+
+
+------------------------------------------------------------
+6) Tom’s suspected file transfers
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=smtp_custom
+| search tom
+| stats count by filename
+| sort - count
+
+Use:
+Builds a quick census of all filenames Tom handled; bubbles up sensitive items
+like recipes, keys, or IP‑leaking docs.
+
+
+------------------------------------------------------------
+7a) Credential harvesting / suspicious auth flows
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined (malware OR unauthorized OR "login" OR "password")
+| table _time clientip method uri_path status user agent
+| sort - _time
+
+Use:
+Hunts for keyword‑driven signs of password harvesting and failed auth flows,
+including brute force and scripted probing.
+
+
+------------------------------------------------------------
+7b) XSS indicators (cookie theft, attacker sink)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined
+| search ("<script" OR "document.cookie" OR "fetch(" OR "attacker-server.com")
+| table _time clientip uri query status
+| sort - _time
+
+Use:
+Detects tell‑tale XSS patterns such as inline <script>, cookie access attempts,
+and data exfiltration via fetch() to attacker infrastructure.
+
+
+------------------------------------------------------------
+8) Rick’s bandwidth spike (daily trend)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" 192.168.0.8
+| stats sum(bytes) AS total_bytes by _time
+| timechart span=1d sum(total_bytes) AS "Bandwidth Usage"
+
+Use:
+Quantifies daily data usage from Rick’s host; use to corroborate productivity
+concerns or detect exfiltration windows.
+
+
+------------------------------------------------------------
+8b) Rick’s top destinations
+------------------------------------------------------------
+SPL:
+index="hungryhustle" 192.168.0.8
+| stats count by dest
+| sort - count
+
+Use:
+Shows most frequently contacted hosts by Rick’s workstation (e.g., streaming or
+social media endpoints explaining bandwidth spikes).
+
+
+------------------------------------------------------------
+9) Outage / DoS window by status code (hourly buckets)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined earliest="05/19/2024:00:00:00" latest="05/20/2024:00:00:00"
+| timechart span=60m count by status
+
+Use:
+Compares accepted vs error responses across the outage day; spikes in 4xx/5xx
+alongside traffic surges can indicate DoS conditions.
+
+
+------------------------------------------------------------
+10) Planned maintenance duration (start, end, total)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype=access_combined file=maintenance
+| stats earliest(_time) AS start_time latest(_time) AS end_time
+| eval duration=tostring(end_time - start_time, "Duration")
+| eval normal_start_time=strftime(start_time, "%Y-%m-%d %H:%M:%S")
+| eval normal_end_time=strftime(end_time, "%Y-%m-%d %H:%M:%S")
+| table normal_start_time normal_end_time duration
+| rename normal_start_time AS "Start Time" normal_end_time AS "End Time"
+
+Use:
+Formats human‑readable maintenance windows and total downtime directly from log
+events that mark maintenance files/paths.
+
+
+------------------------------------------------------------
+11) Most‑viewed product (exclude noise; group by file)
+------------------------------------------------------------
+SPL:
+index="hungryhustle" sourcetype="access_combined" status=200
+| search NOT file IN ("homepage","phosphor-react.js")
+| transaction file
+| top limit=1 file
+
+Use:
+Excludes non‑product assets, stitches related hits by product file, and reports
+the most popular item customers actually viewed.
+
+
+------------------------------------------------------------
+12) Dashboard building blocks you used
+------------------------------------------------------------
+- transaction
+  Used to stitch related web events by file/product into sessions/flows.
+
+- eval
+  Used to derive fields (e.g., durations), format timestamps, and create
+  single‑value KPIs.
+
+- Custom Field Extraction (Return_path)
+  Extracted SMTP Return_path from headers to attribute emails to senders,
+  enabling “rare” analysis and attachment correlation.
+
+
+------------------------------------------------------------
+Appendix: Tips for Reuse
+------------------------------------------------------------
+• Always verify true field names in your lab (clientip vs src_ip; file vs uri_path).
+• For geolocation: iplocation clientip adds City, Country, etc.
+• If HTTP method filtering helps, add: method=POST OR method=GET.
+• When triaging insider risk, combine mailbox, file names, and unusual volumes
+  (rare, stats, timechart).
+• Keep a saved search for each use case and pin them into dashboard panels.
