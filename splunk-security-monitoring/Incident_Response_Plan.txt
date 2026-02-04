@@ -1,0 +1,82 @@
+Incident Response Plan for Hungry Hustle 
+1. Preparation 
+Develop an Incident Response Team (IRT): Assign roles and responsibilities to team members. 
+Create an Incident Response Plan (IRP): Document procedures for handling incidents. 
+Train Employees: Conduct regular training sessions on security awareness and incident response. 
+Implement Security Tools: Deploy tools like firewalls, intrusion detection systems (IDS), and antivirus 
+software. 
+2. Detection 
+Monitor Systems: Use Splunk to continuously monitor network traffic and system logs for suspicious 
+activities. 
+Set Up Alerts: Configure alerts for unusual activities, such as multiple failed login attempts or data 
+exfiltration. 
+Regular Audits: Perform regular security audits and vulnerability assessments. 
+3. Containment 
+Immediate Containment: Isolate affected systems to prevent further damage. 
+Short-Term Containment: Apply temporary fixes, such as blocking malicious IP addresses and 
+disabling compromised accounts. 
+Long-Term Containment: Implement more permanent solutions, such as patching vulnerabilities 
+and enhancing security controls. 
+4. Eradication 
+Identify Root Cause: Use forensic analysis to determine the source and method of the breach. 
+Remove Malware: Clean infected systems and remove any malicious code. 
+Patch Vulnerabilities: Apply patches to fix security flaws and prevent re-exploitation. 
+5. Recovery 
+Restore Systems: Recover systems from clean backups and ensure they are fully operational. 
+Monitor Systems: Continue to monitor systems for any signs of residual threats. 
+Validate Security: Conduct thorough testing to ensure that all vulnerabilities have been addressed. 
+6. Lessons Learned 
+Post-Incident Review: Conduct a review meeting to discuss what happened, what was done well, 
+and what could be improved. 
+Update IRP: Revise the incident response plan based on lessons learned. 
+Implement Improvements: Apply the insights gained to enhance security measures and prevent 
+future incidents. 
+Specific Actions for Addressing the Data Breach 
+Immediate Actions: 
+• Isolate affected systems. 
+• Notify stakeholders and regulatory bodies. 
+• Begin forensic analysis to identify the breach source. 
+Short-Term Actions: 
+• Block malicious IP addresses. 
+• Reset passwords for affected accounts. 
+• Apply patches to vulnerable systems. 
+Long-Term Actions: 
+• Enhance monitoring and logging. 
+• Conduct regular security training. 
+• Implement multi-factor authentication (MFA). 
+Methods for Identifying and Analyzing the Source of the Breach 
+Log Analysis: Use Splunk to analyze logs for unusual activities and trace the attack path. 
+Network Traffic Analysis: Monitor network traffic for signs of data exfiltration or communication with 
+malicious servers. 
+Forensic Tools: Utilize forensic tools to examine compromised systems and identify malware or other 
+indicators of compromise (IOCs). 
+Recommendations for Mitigating Future Incidents 
+Short-Term Strategies: 
+• Implement MFA for all accounts. 
+• Conduct regular vulnerability assessments. 
+• Enhance email security to prevent phishing attacks. 
+Long-Term Strategies: 
+• Develop a comprehensive security awareness program. 
+• Invest in advanced threat detection and response tools. 
+• Establish a continuous improvement process for security policies and procedures. 
+Threat Intelligence Recommendations 
+Policies and Processes for Threat Intelligence 
+Threat Intelligence Program: Establish a formal threat intelligence program to collect, analyze, and 
+act on threat data. 
+Sources of Intelligence: Utilize multiple sources, including open-source intelligence (OSINT), 
+commercial threat feeds, and information sharing with industry peers. 
+Threat Analysis: Regularly analyze threat data to identify trends and emerging threats. 
+Actionable Intelligence: Translate threat intelligence into actionable measures, such as updating 
+f
+irewall rules or blocking malicious IP addresses. 
+Addressing Recent Breaches and Vulnerabilities 
+Example of Actionable Intelligence: 
+Phishing Campaign: If threat intelligence indicates a rise in phishing attacks, implement email 
+f
+iltering and train employees to recognize phishing attempts. 
+Zero-Day Vulnerability: If a new zero-day vulnerability is discovered, apply virtual patching and 
+monitor for exploitation attempts. 
+Sharing intelligence: This method can help the platform to be updated on trends or new ways to 
+exploit vulnerabilities in the system, there are several platforms that should be continuously 
+reviewed such as IBM X-FORCE Exchange, splunk (which we are using at the moment) or CrowdStrike 
+Falcon X.
